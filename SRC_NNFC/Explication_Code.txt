@@ -1,0 +1,172 @@
+Tout ce qui est noté NNFC est relatif à l'utilisation d'un réseau de neurones Fully Connect 
+
+struct NN_Full_Connect
+{
+	float (*F_Cost)(float *, int);
+	void (*dF_Cost)(float *, float *, int);
+	float (*F_updt_lr)(float *);
+	void (*F_Quality)(float *, float *, int);
+	Layer ** Tab_Layer;
+	int nb_Layer;
+	Grad * G;
+	int nb_epoch;
+	int nb_val_Fwd;
+	float * Val_Fwd;
+	float cur_Y;
+	float learate;
+};
+
+La structure NN_FULL_Connect est la structure même du réseau, c'est à dire qu'il prend la forme d'une graphe de calcul particulié. Il est regroupé en "Layer". 
+Il contient :
+Le tableau de pointeurs des Layers 
+Les pointeurs vers les fonctions de coût et leur dérivées 
+Le nombre d'epochs 
+Val Fwd correspond à la ou les sorties du dernier Layer après Forward
+
+Cur Y est la valeur de Y pour l'individus en cours : Que ce soit pour une prédiction ou une classification multinomiale , Y sera toujours donné en nombre flotant . 
+Prédiction : Une sortie pour le Layer de sortie -> Y est la vraie valeur 
+Classification , K sortie (modalités de la cibles ). -> Y est le numéro de la modalité . 
+
+
+Grad * G , est un pointeur vers la structure Gradiant, qui va permettre de stocker les dérivées et somme de dérivées (pour chaque epoch: somme des dérivées pour chaque individus, puis moyenne , puis mise à jour )
+Grad contient donc son propre tableaud de float ( Pour la somme ) ainsi que les pointeurs vers les coeffs et vers les dérivées de coeffs.
+
+
+Tout le code est organisé autour de la structure de Layer 
+
+struct Layer
+{
+	float * Input;
+	float * Poids;
+	float * dInput;
+	float * dPoids;
+	float * Z;
+	int nb_in;
+	int nb_out;
+	float (*F_Activ)(float);
+	float (*dF_Activ)(float);
+	float * Alpha_Beta; // en fonction de si la derivee utilise f(z) (beta) ou z (alpha) pour se calculer 
+	Layer * Father;
+	Layer * Son;
+
+};
+
+
+Chaque Layer contient : 
+
+Input : Les données Input de la couche , correspondant à f(Z), ou Z est la combinaison linéaire de la couche précédente et f la fonction d'activation de la couche précédente. 
+/!\ Pour le premier Layer L1, les Inputs correspondent à l'observation .
+
+dInputs: Correspondent au dérivées des Inputs utilisés pour la différentiation automatisée. 
+/!\ L1 n'a donc pas de dInputs (car non utilisé)  
+
+Poids : les poids, pour chaque couche , nous cherchons à optimiser la valeur de ces poids . 
+/!\ La dernière couche, celle  de sortie, Ln n'as pas de poids. Les inputs de la couche de sortie sont en réalité la sortie de la fonction forward
+
+dPoids : Les dérivées partielles des poids, qui composent le gradiant. La Structure Grad a un pointeur vers l'ensemble de ces poids   
+
+Z est le résultats de combinaisons linéaire des coefficients associés à leur poids , il est donc de taille (nb out)
+
+/!\ les fonctions d'activations sont appliquées sur les données Zi de la couche en cours, et permettent de définir (f(Zi) oui f est la fction d'ativations qui sont les inputs de la couche suivante .
+Un "1" est alors rajouté comme dernier "nb in" de la couche suivante pour la constante  /!\
+
+Alpha Beta est un peu plus Tricky et est utilisé lors de la backward , 
+Une fonction Alpha est une fonction dont le moyen le plus efficace de calculer sa dérivée est de passer par une formule explicite en fonction de l'antécédant (ex : f(x) = x^2), df/dx = 2x
+Une fonction Beta est une fonction dont le moyen le plus efficace de calculer sa dérivée est de passer par une formule explicite en fonction de l'image de la fonction . (soit s la sigmoide s(x)= 1/(1+e^(-x)), et 
+ds/dx = s(x)(1-s(x))
+Alpha Beta pointera donc vers les valeurs Zi de la couche précédentes , ou vers "Input" de la couche en cours.
+
+A bien comprendre :
+Le premier Layer (indice 0) est le Layer Input 
+La dernier Layer (indice nb_layer-1) est le Layer de sortie,  .
+Pour les autres Layers : nb_in est (le nombre de neurones prévu pour la couche) +1, 
+						 nb_out est le nombres de neuronnes prévu en input pour la couche suivante
+						 les nb_in-1 premiers coeffs d'une couche sont les f(Zi) de la couche précédente
+						 le "nb_in" coeff = 1.00 
+
+
+Comprendre la fonction NNFC_Forward 
+
+La fonction Forward fonctionne comme suit :
+De la première à l'avant dernière couche :
+Calcul des (nb_out) combinaisons linéaires : les Zi 
+Applications de la fonction d'activations de la couche (f(Zi))
+Les f(Zi) sont alors les  nb_in -1 premier input de la couche suivante 
+On attribue 1.00 à l'input n de la couche suivante (inutil pour la couche de sortie mais tant pis) 
+
+Pour la dernière couche : 
+Il était prévu d'appliquer une fonction non linéaire mais finalement non , tout est géré dans la fonction de coût choisie . donc on stock simplement les valeurs dans le vecteur de retour de NNFC . (à voir pour la suite )
+
+
+
+
+Comprendre la fonction NNFC_Backward 
+
+La fonction Backward fonctionne ainsi : 
+
+
+En appliquant la fonction NNFC->dF_Cost , on donne directement les dérivées des sorties brutes (résultats de combinaisons linéaires) (donc des Zi de l'avant dernière couche)
+/!\ Pour l'instant je ne considère pas d'activation non linéaire pour la couche de sortie /!\
+
+
+Ensuite , pour les couches de l'avant dernière à la 2 ème, on applique do_Backward () qui fait la chose suivante 
+
+Les dérivées des nb_in -1 premiers coefficients :
+## Si  plusieurs sortie , Calcul de Somderiv , la somme des dérivées partielles selon chaque sortie 
+(doJ/doA = doB/doA * dB) pour une sortie B données 
+Si il ne s'agit pas de du coefficients de la constante :
+On calcule la dérivée doJ/doC = doB/doC ou C est la combinaison linéaire qui appliquée avec forward donne B.
+DANS CE CAS LA DERIVEE en dInput[0 à nb_in-1] est en fait la dérivée du Zi de la couche précédente !
+LA FONCTION DERIVEE UTILISEE EST DONC LA DERIVEE DE LA FCTION D ACTIVATION DE LA COUCHE PRECEDENTE 
+L'INPUT de CETTE FONCTION est Alpha_Beta , qui pointe soit vers Zi de la couche précédente soit vers Input de la couche actuelle en fonction de s'il s'agit d'une couche Beta ou Alpha 
+pour le coeff numéro nb_in : inutil à calculer.
+
+Pour les nb_in poids , vu qu'il s'agit des poids , la dérivées est alors : 
+Val associée * dérivée sortie associée . 
+
+
+
+Comprendre la Structure Grad 
+
+
+struct Grad
+{
+	float ** pt_Coeff;
+	float ** pt_dCoeff;
+	float * dCoeff_updt;
+	float * G1;
+	float * G2;
+	int nb_coeff;
+};
+
+
+pt_Coeff représente un tableau de pointeur vers les poids
+pt_dCoeff représente un tableau de pointeur vers les dérivées partielles des poids à l'instant t
+dCoeff_updt , lors d'un bach , les dcoeff sont additionnés , puis divisé par n pour avoir la dérivée sur l'ensemble des obs
+G1 et G2 sont utilisés dans le cas d'omptimisation sur le learning rate (ADAGRAD, MSPROP, ADAM)
+
+
+Les Bases : 
+
+Les Bases Train et test ont des pointeurs vers les lignes de la matrice X 
+En revanche, elles ont des copies des valeurs Y 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Matrice des variables explicatives : Une colonne de 1 est toujours rajoutée, elle sera ou non prise en compte en fonction de données centrées réduites
+
+La couche de sortie ne prend pas de fonction d'activation
+
+LE NNFC->Val_forward prends a une adresse mémoire de plus pour y stocker la valeur de Y
+

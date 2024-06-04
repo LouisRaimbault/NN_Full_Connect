@@ -1,0 +1,32 @@
+String value -> what it does
+----------------------------
+
+## Activation Function 
+
+None -> none
+Sigmoide -> sigmoide(x)
+Relu -> relu(x)
+LeakyRelu -> leakyrelu(x)
+Tanh -> hyperbolic_tangent(x)
+
+-----------------------------
+
+## Cost Function 
+
+MSE -> Mean Square Error
+CrossE -> Cross Entropy 
+
+-----------------------------
+
+## Learning Rate function 
+None -> none
+Adagrad -> Adagrad
+Rmsprop -> RmsPROP
+Adam -> Adam
+
+-------------------------------
+
+## Model Quality 
+
+RegLin -> Print some important values usually used for predictions
+Classif -> print Confuse Table

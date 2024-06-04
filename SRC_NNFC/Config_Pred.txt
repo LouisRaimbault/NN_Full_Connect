@@ -1,0 +1,28 @@
+Target :Murder,
+
+nb_Layer :4,
+
+nb_Nodes_Layer :0,2,2,1,
+
+Range_first_teta:-0.5,0.5,
+
+Names_F_Activ :None,None,None,None,
+
+Name_F_Cost :MSE,
+
+Learning Rate :0.01,
+
+Name_F_Learate :Adagrad,
+
+Values_hyparam :0.9,0.99,
+
+nb_epoch :10000,
+
+Name_F_Quality :RegLin,
+
+ind for Test:0.20,
+
+Do Normalization :1,
+
+Nb_Thread :1,
+
