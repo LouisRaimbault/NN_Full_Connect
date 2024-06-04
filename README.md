@@ -35,6 +35,7 @@ cd SRC_NNFC && make
 For this version. The accepted data format is as follows. The first line is the name of the variables. Variables can be quantitative or qualitative. Binary or ordinal data are considered quantitative.
 
 |v1,v2,v3|
+|------------|
 |1,a,2.21|
 |2,b,3.07|
 |-1,c,1.00|
