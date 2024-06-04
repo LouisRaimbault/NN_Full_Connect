@@ -4,7 +4,9 @@
 
 **All parameters and hyperparameters must be specified in a configuration file.**
 
-2 templates are available in this folder. Each line must end with a comma. If several parameters are to be entered on the same line, the separator is also a comma. The help.cpp file contains the list of parameters. If no value is to be specified, use "none". A correction is applied to the number of neurons in the input and output layers. So that it is consistent. The training and test observations are selected randomly. If you want to carry out training on the entire database, set the value 0.00 in Ind_for_Test. A single observation will then be kept for the test base.
+2 templates are available in this folder. Each line must end with a comma. If several parameters are to be entered on the same line, the separator is also a comma. The help.cpp file contains the list of parameters.\
+If no value is to be specified, use "none". A correction is applied to the number of neurons in the input and output layers. So that it is consistent.\
+ The training and test observations are selected randomly. If you want to carry out training on the entire database, set the value 0.00 in Ind_for_Test. A single observation will then be kept for the test base.\
 
 Concerning configuration files. You must maintain the order of the lines and not delete them.
 
