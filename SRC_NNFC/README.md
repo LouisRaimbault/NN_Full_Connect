@@ -12,7 +12,7 @@ Concerning configuration files. You must maintain the order of the lines and not
 
 
 
-## Parameters for SufRec in src_Fim :
+## Parameters for NNFC in SRC_NNFC (training Modele) :
 |param|type|note|
 |--------------------|--------|--------|
 |    Target    |    string    | Name of The target |  
@@ -30,4 +30,33 @@ Concerning configuration files. You must maintain the order of the lines and not
 |    nb_epoch    |  int | number of epoch|
 |    Do Normalization    |  int | 1 if the data should be centered reduced (0 otherwise)|
 |    Nb_Thread    |  int | number of threads to use|
+|    Pathout    |  string | The path for output, usefull to apply Model. ("none" for no export)|
+
+
+## Parameters for NNFC in SRC_NNFC (Use Modele and do Pred Classif) :
+
+Most of parameters of this configuration file are already written during extraction
+
+|param|type|note|
+|--------------------|--------|--------|
+|    Classif or Pred    |    string    | If model for Classif or Pred |  
+|    Normalize or no   |    int    | If model was train with normalization of data | 
+|    Nb_Var  |    int    | Number of explicativ variables (X) | 
+|    Name X  |    string    | Names of explicativ variables (with order)  | 
+|    avg_X   |    float[Nb_Var] | Average of explicativ variables (with order) | 
+|    sd_X    |   float[Nb_Var]   |  Sd of explicativ variables (with order)   | 
+|    Name_target    |    string    | Name of the target Y|
+|    Nb_Mod_Y    |    int    | Number of modality for target Y| 
+|    Mod_Y    |    string[Nb_Mod_Y]   | Names of Y mod| 
+|    avg_Y    |  float | Average of Y|
+|    sd_Y    |  float | sd of Y|
+|    Nb_Layer    |  int | Number of Layers in Model|
+|    Nb_Nodes_Layer    |  int[Nb_Layer] | Numer of nodes per Layer (cste not considered)|
+|    Names_F_Activ   |    string[nb_layer-1] | Name of the Activation function for each layer (the output has none) |
+|    nb_Weights    |  int | total number of Weights|
+|    Weights    |  float[nb_Weights] | List of Weights (order is important)|
+|    With_tgt    |  1 | If Target exist in new data (if 1 Test model, 0 do Class/Pred)|
+|    pathout    |  string | if With_tgt = 0 , Get Pred/Class|
+
+
 
