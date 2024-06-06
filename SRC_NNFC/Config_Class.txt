@@ -24,5 +24,7 @@ Ind for Test:0.10,
 
 Do Normalization :1,
 
-Nb_Thread :4,
+Nb_Thread :1,
+
+pathout :Config_Mod.txt,
 

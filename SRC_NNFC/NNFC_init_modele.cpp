@@ -39,6 +39,7 @@ void Normalize_Matrix (Data * D)
 			avg_2_X[j] = avg_2_X[j]/(float)nb_ind;
 			sd_X[j] = avg_2_X[j] - avg_X[j]*avg_X[j];
 			sd_X[j] = std::pow(sd_X[j],0.05f);
+			if (sd_X[j] < 0.00001) {sd_X[j] = 0.00001;}
 		}
 
 	for (i = 0; i< nb_ind; i++)
@@ -80,8 +81,8 @@ void NNFC_Set_Bases (Data * D)
 {	
 	int nb_ind = D->nb_ind;
 	int nb_ind_test = (int)(D->nb_ind*D->NC->pcent_Test);
-	if (nb_ind_test == 0) {nb_ind_test = 1;}
 	int nb_ind_train = D->nb_ind - nb_ind_test;
+	if (nb_ind_test == 0) {nb_ind_test = 1;}	
 	float ** Mat_Train = (float**)malloc(nb_ind_train*sizeof(float*));
 	float ** Mat_Test = (float**)malloc(nb_ind_test*sizeof(float*)); 
 	int * ind_order = (int*)malloc(nb_ind*sizeof(int));
@@ -222,6 +223,7 @@ void NNFC_init_modele (Data * D)
 	D->NC->nb_Nodes_Layer[0] = D->nb_var;
 	D->Train = (Base*)malloc(sizeof(Base)); D->Train->nb_ind = D->nb_ind;
 	D->Test = (Base*)malloc(sizeof(Base)); D->Test->nb_ind = D->nb_ind;
+	D->avg_Y = 0.00; D->sd_Y = 0.00;
 	if (D->NC->do_normalization == 1) {Normalize_Matrix(D);}
 	NNFC_Set_Bases(D);
 	NNFC_Set_NNFC(D,&(D->NNFC));

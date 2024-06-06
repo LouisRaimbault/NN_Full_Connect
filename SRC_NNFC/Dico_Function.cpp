@@ -97,7 +97,7 @@ void deri_Cost_Cross_E (float * Val_Fwd, float * deri_val ,int nb_arg)
 
 // Section Qualoity Coeff
 
-void Qual_RegLin (float * Y, float * Y_hat, int nb) // en val[1] le nombre de ligne de Y, ensuite et à la suite, Y et y hat 
+void Qual_Pred (float * Y, float * Y_hat, int nb) // en val[1] le nombre de ligne de Y, ensuite et à la suite, Y et y hat 
 {
   double SCE = 0.00;
   double SCT = 0.00;
@@ -252,7 +252,7 @@ void Set_map_deri_Cost (std::unordered_map<std::string,void(*)(float *, float * 
 
 void Set_map_Quality_Coeff (std::unordered_map<std::string,void(*)(float *, float*, int)> * map_Quality_Coeff)
 {
-	map_Quality_Coeff->operator[]("RegLin") = Qual_RegLin;
+	map_Quality_Coeff->operator[]("Pred") = Qual_Pred;
 	map_Quality_Coeff->operator[]("Classif") = Qual_Classif;	
 
 }
@@ -275,7 +275,7 @@ void Set_map_Alpha_Beta (std::unordered_map<std::string, int> * map_Alpha_Beta)
 	map_Alpha_Beta->operator[]("Tanh") = 1;
 }
 
-void Set_Mappy_Star (Data * D)
+void Set_Mappy_Star (Data * D, int t)
 {
 	Mappy_Star * MS = (Mappy_Star*)malloc(sizeof(Mappy_Star));
 	std::unordered_map<std::string,float(*)(float )> * map_Activ = new std::unordered_map<std::string,float(*)(float)>;
@@ -304,5 +304,6 @@ void Set_Mappy_Star (Data * D)
 	MS->map_Quality_Coeff = map_Quality_Coeff;
 	MS->map_updt_LR = map_updt_LR;
 	MS->map_Alpha_Beta = map_Alpha_Beta;
-	D->NC->MS = MS;
+	if (t == 0) {D->NC->MS = MS;}
+	if (t == 1) {D->MC->MS = MS;}
 }	

@@ -18,11 +18,12 @@ void NNFC_DEL_Config (NNFC_config * NC)
   free(NC->Range_First_Teta);
   free(NC->Values_Hyparam);
   delete [] NC->Name_F_Activ;
-
+  
   delete NC->Name_F_Cost;
   delete NC->NomTarget;
   delete NC->Name_F_Learate;
   delete NC->Name_F_Quality;
+  delete  NC->pathout;
   NNFC_DEL_Mappy_Star (NC->MS);
   free(NC);
 }
@@ -158,6 +159,7 @@ void NNFC_Print_Config(NNFC_config * NC)
   std::cout << "Nb ind Test = Nb_ind *  : " << NC->pcent_Test << "\n"; 
   std::cout << "Do Normalization : " << NC->do_normalization << "\n"; 
   std::cout << "NB Thread : " << NC->nb_thread << "\n";
+  std::cout << "pathout : " << *(NC->pathout) << "\n";
   std::cout << "\n ################################################### \n\n";
 
 }
@@ -291,7 +293,9 @@ void NNFC_Get_Config (NNFC_config * NC)
   while (Buffer[i] != ':') {i++;}i++;
   while (Buffer[i] != ',') {st = st + Buffer[i]; i++;}i++; // Récupération de l'info : nombre de thread 
   NC->nb_thread = std::stoi(st); st = "";
-
+  while (Buffer[i] != ':') {i++;}i++;
+  while (Buffer[i] != ',') {st = st + Buffer[i]; i++;}i++; // Récupération de l'info : pathout
+  NC->pathout = new std::string (st); st = "";
   
   free (Buffer);
   NNFC_Print_Config(NC);
@@ -430,12 +434,12 @@ void NNFC_Get_Data (Data * D, char * path_data, char sep)
         }
       for (i = 0; i < nb_ind; i++)
         {
-          Y[i] = (float)(num_mod[q][i]);          
+          Y[i] = (float)(num_mod[q][i]);         
         }  
       nb_mod_Y = nb_mod_qual[q]-1; 
       std::string * nomModY = new std::string [nb_mod_Y];
       for (int z = 0; z < nb_mod_Y;z++)
-      {nomModY[nb_var] = findKeyByValue(&Tab_Mappy[q],z+1);} 
+      {nomModY[z] = findKeyByValue(&Tab_Mappy[q],z+1);} 
       D->nomModY = nomModY;  
       break;
     }  
@@ -501,6 +505,51 @@ void NNFC_Get_Data (Data * D, char * path_data, char sep)
 
 
 
+void NNFC_Get_Export (Data * D)
+{
+  std::ofstream outfile;
+
+  outfile.open(*(D->NC->pathout));
+  int i;
+  if (outfile.is_open() == 0)
+    {
+      std::cerr << "Problem with output file \n";
+      return ;
+    }
+  outfile << "Classif or Pred :" << *(D->NC->Name_F_Quality) << ",\n\n";
+  outfile << "Normalize or no :" << D->NC->do_normalization << ",\n\n";
+  outfile << "Nb Var :" << D->nb_var << ",\n\n";
+  
+  outfile << "Nom X :"; for (i = 0; i < D->nb_var; i++){outfile << D->Nomvar[i] << ",";} outfile << "\n\n";
+
+  if (D->NC->do_normalization == 0) 
+    {
+      outfile << "avgX:,\n\nsqrt X:,\n\n";
+      goto aftr_norm;
+    }
+  outfile << "avg_X :"; for (i = 0; i < D->nb_var; i++) {outfile << D->avg_X[i] << ",";} outfile << "\n\n";
+  outfile << "sd_X :"; for (i = 0; i < D->nb_var; i++) {outfile << D->sd_X[i] << ",";} outfile << "\n\n";
+  aftr_norm : ;
+  outfile << "Nom_target :" << *(D->NomTarget) << ",\n\n";
+  outfile << "Nb_Mod_Y :" << D->nb_mod_Y << ",\n\n";
+  outfile << "Mod_Y :"; for (i = 0; i < D->nb_mod_Y; i++) {outfile << D->nomModY[i] << ",";} outfile << "\n\n";
+  outfile << "avg_Y :" << D->avg_Y << ",\n\n";
+  outfile << "sd_Y :" << D->sd_Y << ",\n\n";
+  outfile << "Nb_Layer :" << D->NNFC->nb_Layer << ",\n\n";
+  outfile << "Nb_Nodes_Layer :"; for (i = 0; i < D->NNFC->nb_Layer; i++){outfile << D->NC->nb_Nodes_Layer[i] << ",";} outfile<< "\n\n"; 
+  outfile << "Name_F_Activ :"; for (i = 0; i < D->NNFC->nb_Layer; i++){outfile << D->NC->Name_F_Activ[i] << ",";} outfile<< "\n\n";
+  outfile << "nb_Weights :" << D->NNFC->G->nb_coeff << ",\n\n";
+  outfile << "Weights :"; 
+  for (i = 0; i < D->NNFC->G->nb_coeff;i++){outfile << *(D->NNFC->G->pt_Coeff[i]) << ",";} outfile << "\n\n";
+  outfile << "With_tgt :1,\n\n";
+  outfile << "pathout :none,\n\n";
+
+
+
+  outfile.close();
+
+
+}
 
 
 

@@ -14,7 +14,6 @@ float NNFC_Linear_Combine (float * Input, float * Poids, int nb_in, int num_out)
 
 void NNFC_Forward (NN_Full_Connect * NNFC)
 {
-
 	int j; float ret;
 	Layer * L;
 	float * Son_Input;
@@ -165,7 +164,7 @@ void NNFC_Set_Yhat (Data *D, int t_o_t)
 
 		if (D->NC->do_normalization == 1)
 			{
-				for (int i =0; i < B->nb_ind;i++)
+				for (int i =0; i < nb_ind;i++)
 					{
 						Y_hat[i] = Y_hat[i]*D->sd_Y + D->avg_Y;
 						Y[i] = Y[i]*D->sd_Y+ D->avg_Y;
@@ -191,8 +190,6 @@ void NNFC_Set_Yhat (Data *D, int t_o_t)
 
   std::cout << "results on Base : " << nom_base << "\n\n";
   D->NNFC->F_Quality (Y,Y_hat,nb_ind);
-  
-
 }
 
 

@@ -46,22 +46,57 @@ struct NNFC_config
 {
   char * Path_Config; 
 	std::string  * NomTarget;
-	int nb_Layer;
-	int * nb_Nodes_Layer;
-	float * Range_First_Teta;
+	std::string * Name_F_Quality;
 	std::string * Name_F_Activ;
 	std::string  * Name_F_Cost;
-	float pcent_Test;
+	std::string  * Name_F_Learate;
+	std::string * pathout;
+	Mappy_Star * MS;
+	
+	int nb_Layer;
+	int * nb_Nodes_Layer;
+
+	int nb_epoch;
+	float * Range_First_Teta;
+	
 	float Learate;
 	float * Values_Hyparam;
-	std::string  * Name_F_Learate;
-	int nb_epoch;
-	std::string * Name_F_Quality;
+
+	float pcent_Test;
 	int do_normalization;
 	int nb_thread;
-	Mappy_Star * MS;
+	
+
 };
 
+struct Modele_config
+{
+	char * Path_Config;
+	std::string * pathout;
+	
+	std::string * COP;
+	std::string * Nom_X;
+	std::string * NomTarget;
+	std::string * nomModY;
+	std::string * Name_F_Activ;
+
+	int nb_mod_Y;
+	int nb_Layer;
+	int * nb_Nodes_Layer;
+	int nb_weights;
+	float * weights;
+	int do_normalization;
+	int nb_var;
+	float * avg_X;
+	float * sd_X;
+	float avg_Y;
+	float sd_Y;
+
+	int with_tgt;
+
+	Mappy_Star * MS;
+
+};
 
 
 struct Layer
@@ -119,6 +154,7 @@ struct Info_Thread
 struct Data
 {
 	NNFC_config * NC;
+	Modele_config * MC;
 	NN_Full_Connect * NNFC;
 	Base * Train;
 	Base * Test;
@@ -143,15 +179,17 @@ struct Data
 void NNFC_DEL_Mappy_Star (Mappy_Star * MS);
 void NNFC_DEL_Config (NNFC_config * NC);
 void NNFC_DEL_Base (Base * B);
+void NNFC_DEL_Grad (Grad * G, int b);
+void NNFC_DEL_Layer (Layer * L, int a, int b, Data * D);
+void NNFC_DEL_NN_Full_Connect (NN_Full_Connect * NNFC, int b ,Data * D);
+void NNFC_DEL_Info_Thread (Info_Thread * ITh, Data * D);
 void NNFC_DEL_Data (Data * D);
-void NNFC_DEL_Grad (Grad * G);
-void NNFC_DEL_Layer (Layer * L);
-void NNFC_DEL_NN_Full_Connect (NN_Full_Connect * NNFC);
 void NNFC_Print_Config(NNFC_config * NC);
 void NNFC_Print_Data (Data * D, int n);
 void fill_arr_from_file(char * pathfile, uint64_t * l, int * nrow, char ** tabchar);
 void NNFC_Get_Config (NNFC_config * NC);
 std::string findKeyByValue( std::unordered_map<std::string, int> * map, int value);
 void NNFC_Get_Data (Data * D, char * path_data, char sep);
+void NNFC_Get_Export (Data * D);
 
 #endif

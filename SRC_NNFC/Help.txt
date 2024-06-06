@@ -28,5 +28,5 @@ Adam -> Adam
 
 ## Model Quality 
 
-RegLin -> Print some important values usually used for predictions
+Pred -> Print some important values usually used for predictions
 Classif -> print Confuse Table

@@ -153,20 +153,10 @@ En revanche, elles ont des copies des valeurs Y
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 Matrice des variables explicatives : Une colonne de 1 est toujours rajoutée, elle sera ou non prise en compte en fonction de données centrées réduites
 
 La couche de sortie ne prend pas de fonction d'activation
 
 LE NNFC->Val_forward prends a une adresse mémoire de plus pour y stocker la valeur de Y
+Les B-Y prennent de l'espace mémoire supplémentaires pour stocker des infos necessaires utilisées dans le print quality
 
