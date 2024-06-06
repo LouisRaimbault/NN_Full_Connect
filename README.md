@@ -18,6 +18,7 @@ It is important to know that the precision used in all algorithms is float preci
 
 **SRC_NNFC:**
 * Model training
+* Apply Model on New Bases
 * Configuration file templates 
 * List of activation functions
 
