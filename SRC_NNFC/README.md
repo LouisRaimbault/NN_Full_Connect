@@ -18,12 +18,12 @@ Concerning configuration files. You must maintain the order of the lines and not
 |    Target    |    string    | Name of The target |  
 |    nb_Layer   |    int    | The number of Layers. Input and Output are considered as Layer | 
 |    nb_Nodes_Layer  |    int [nb_Layer]    | The number of nodes/Layer | 
-|    Range_first_teta  |    float * [2]    | Borne inf and sup for first value of weigts   | 
+|    Range_first_teta  |    float[2]    | Borne inf and sup for first value of weigts   | 
 |    Names_F_Activ   |    string[nb_layer-1] | Name of the Activation function for each layer (the output has none) | 
 |    Name_F_Cost    |   string   |  Name of the Cost function    | 
 |    Learning_Rate    |    float    | Value of the learning rate|
 |    Name_F_Learate    |    string    | Name of the optimization function for the learning rate | 
-|    Values_hyparam    |    float[2]*   | Values for hyperparameters considering the Name_F_Learate| 
+|    Values_hyparam    |    float[2]   | Values for hyperparameters considering the Name_F_Learate| 
 |    nb_epoch    |  int | number of epoch|
 |    Name_F_Quality    |  string | Results display function|
 |    Ind_for_Test    |  float | proportion of observations for Test Base|
